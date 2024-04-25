@@ -1,5 +1,8 @@
-// rscli csv -i input.csv -o output.json --header -d ','
+use std::path::Path;
+
 use clap::Parser;
+
+// rscli csv -i input.csv -o output.json --header -d ','
 
 #[derive(Debug, Parser)]
 #[command(name = "rscli", version, author, about, long_about)]
@@ -16,7 +19,7 @@ enum Subcommand {
 
 #[derive(Debug, Parser)]
 struct CsvOpts {
-    #[arg(short, long)]
+    #[arg(short, long, value_parser = verify_input_file)]
     input: String,
 
     #[arg(short, long, default_value = "output.json")]
@@ -32,4 +35,12 @@ struct CsvOpts {
 fn main() {
     let opts = Opts::parse();
     println!("{:?}", opts);
+}
+
+fn verify_input_file(filename: &str) -> Result<String, String> {
+    if Path::new(filename).exists() {
+        Ok(filename.into())
+    } else {
+        Err("File does not exist".into())
+    }
 }
