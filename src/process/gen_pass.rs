@@ -43,7 +43,12 @@ pub fn process_gen_pass(
 
     password.shuffle(&mut rng);
 
-    println!("{}", String::from_utf8(password)?);
+    let password = String::from_utf8(password)?;
+    println!("{}", password);
+
+    // 测试密码强度
+    let estimate = zxcvbn::zxcvbn(&password, &[])?;
+    eprintln!("Password strength: {}", estimate.score());
 
     Ok(())
 }
